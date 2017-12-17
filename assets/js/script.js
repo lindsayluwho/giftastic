@@ -36,6 +36,7 @@ $("#submit-animal").on("click", function(event) {
   var topic = $("#add-animal").val().trim();
   topics.push(topic);
   renderButtons();
+  $("input").val("");
 });
 
 //when a button is clicked, trigger AJAX call to GIPHY API based on search query from button's data value, return 10 gifs
