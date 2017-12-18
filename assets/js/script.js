@@ -13,7 +13,7 @@ function renderButtons() {
         // Then dynamicaly generates buttons for each topic in the array
         var a = $("<button>");
         // Adds a class of topic to our button
-        a.addClass("btn btn-lg btn-info");
+        a.addClass("btn btn-lg btn-primary");
         // Added a data-attribute
         a.attr("data-name", topics[i]);
         if (i == 0) {
@@ -37,16 +37,19 @@ $("#submit-animal").on("click", function(event) {
     topics.push(topic);
     renderButtons();
     $("input").val("");
+    console.log(topics);
 });
 
 //when a button is clicked, trigger AJAX call to GIPHY API based on search query from button's data value, return 10 gifs
 
-$("button").click(function() {
+$(".btn-primary").click(function() {
 
-
-    $(this).attr("aria-selected", "true");
-    var animal = $(this).attr("data-name");
     $("#gifs-display-here").empty();
+    $("#topic").attr("aria-selected", "true");
+    console.log($(this).attr("data-name"));
+    var animal = $(this).attr("data-name");
+    console.log(animal);
+
 
     var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + animal + "&api_key=dc6zaTOxFJmzC&limit=10";
 
