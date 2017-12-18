@@ -32,19 +32,86 @@ renderButtons();
 
 //Handle events where the Add button is clicked
 $("#submit-animal").on("click", function(event) {
-  event.preventDefault();
-  var topic = $("#add-animal").val().trim();
-  topics.push(topic);
-  renderButtons();
-  $("input").val("");
+    event.preventDefault();
+    var topic = $("#add-animal").val().trim();
+    topics.push(topic);
+    renderButtons();
+    $("input").val("");
 });
 
 //when a button is clicked, trigger AJAX call to GIPHY API based on search query from button's data value, return 10 gifs
 
-// $("button").click(function(){
-// 	$(this).attr("aria-selected", "true");
+$("button").click(function() {
+            $(this).attr("aria-selected", "true");
+            var animal = $(this).attr("data-name");
 
-// 	//display 10 gifs in carousel with rating as caption
-// 	//set gifs so they display as still and animate on click (and vice versa)
+            var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + animal + "&api_key=dc6zaTOxFJmzC&limit=10";
 
-// 	});
+            $.ajax({
+                url: queryURL,
+                method: "GET"
+            }).done(function(response) {
+                
+                var giphyArray = response.data;
+
+                //set up carousel divs, controls, etc.
+                $("#gifs-display-here").append("<div id='myCarousel' class='carousel slide' data-ride='carousel'>");
+                $("#myCarousel").append("<ol class='carousel-indicators'></ol>");
+                $("#myCarousel").append("<a class='left carousel-control' href='#myCarousel' data-slide='prev'> <span class='glyphicon glyphicon-chevron-left'></span><span class='sr-only'>Previous</span></a><a class='right carousel-control' href='#myCarousel' data-slide='next'><span class='glyphicon glyphicon-chevron-right'></span><span class='sr-only'>Next</span></a>");
+                $("#myCarousel").append("<div class='carousel-inner'>")
+
+                //display 10 gifs in carousel with rating as caption
+
+                for (j = 0; j < giphyArray.length; j++) {
+                    $(".carousel-inner").append("<div class='item'>");
+                    $(".item").attr("id", j)
+
+                    var dataAnimate = giphyArray[j].images.fixed_height.url;
+                    var dataStill = giphyArray[j].images.fixed_height_still.url;
+                    var dataState = "still";
+                    var image = $("<img>");
+                    var caption = giphyArray[j].rating;
+                    
+                    image.addClass("gif");
+                    image.attr("data-still", dataStill);
+                    image.attr("data-animate", dataAnimate);
+                    image.attr("data-state", dataState);
+                    image.attr("src", dataStill);
+                    
+
+                    $("#"+j).append(image);
+                    $("#"+j).append("<div class='carousel-caption'>Rating: " + caption + "</div></div>");
+
+                    $(".carousel-indicators").append("<li data-target='#myCarousel' data-slide-to='" + j + " ></li>");
+                    
+                    if (j === 0) {
+                        $(".item").addClass("active");
+                        $(".carousel-indicators").addClass("active");
+                    }
+
+
+                }
+
+                //set gifs so they display as still and animate on click (and vice versa)
+
+                $(".gif").on("click", function() {
+                    var state = $(this).attr("data-state");
+
+                    if (state == "still") {
+                        $(this).attr("src", $(this).attr("data-animate"));
+                        $(this).attr("data-state", "animate");
+                    } 
+
+                    else {
+                        $(this).attr("src", $(this).attr("data-still"));
+                        $(this).attr("data-state", "still");
+                    }
+
+
+
+                });
+
+
+  
+            });
+          });
